@@ -1,0 +1,47 @@
+﻿@page "/catalog/jobtypecategories"
+@attribute [MustHavePermission(FSHAction.View, FSHResource.JobTypeCategories)]
+
+@inject IStringLocalizer<JobTypeCategories> L
+@inject IJobTypeCategoriesClient JobTypeCategoriesClient
+
+<FshTitle Title="@L["JobTypeCategories"]" Description="@L["Manage Job Type Categories."]" />
+
+<EntityTable TEntity="JobTypeCategoryDto" TId="Guid" TRequest="UpdateJobTypeCategoryRequest" Context="@Context">
+    <EditFormContent>
+        @if (!Context.AddEditModal.IsCreate)
+        {
+            <MudItem xs="12" md="6">
+                <MudTextField Value="context.Id" ReadOnly DisableUnderLine Label="@L[$"Job Type Category Id"]" />
+            </MudItem>
+        }
+        <MudItem xs="12" md="6">
+            <MudTextField Label="@L["Name"]" For="@(() => context.Name)" @bind-Value="context.Name" />
+        </MudItem>
+
+    </EditFormContent>
+
+</EntityTable>
+
+@code
+{
+    protected EntityServerTableContext<JobTypeCategoryDto, Guid, UpdateJobTypeCategoryRequest> Context { get; set; } = default!;
+
+    protected override void OnInitialized() =>
+        Context = new(
+            entityName: L["Job Type Category"],
+            entityNamePlural: L["Job Type Categories"],
+            entityResource: FSHResource.JobTypeCategories,
+            fields: new()
+            {
+                new(jobTypeCategory => jobTypeCategory.Id, L["Id"], "Id"),
+                new(jobTypeCategory => jobTypeCategory.Name, L["Name"], "Name"),
+            },
+            idFunc: brand => brand.Id,
+            searchFunc: async filter => (await JobTypeCategoriesClient
+                .SearchAsync(filter.Adapt<SearchJobTypeCategoriesRequest>()))
+                .Adapt<PaginationResponse<JobTypeCategoryDto>>(),
+            createFunc: async jobTypeCategory => await JobTypeCategoriesClient.CreateAsync(jobTypeCategory.Adapt<CreateJobTypeCategoryRequest>()),
+            updateFunc: async (id, jobTypeCategory) => await JobTypeCategoriesClient.UpdateAsync(id, jobTypeCategory),
+            deleteFunc: async id => await JobTypeCategoriesClient.DeleteAsync(id),
+            exportAction: string.Empty);
+}

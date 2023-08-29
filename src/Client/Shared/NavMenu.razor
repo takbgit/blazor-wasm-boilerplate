@@ -22,6 +22,12 @@
     {
         <MudText Typo="Typo.subtitle2" Color="Color.Primary" Class="ml-4 my-3">@L["Management"]</MudText>
         <MudNavGroup Title="@L["Catalog"]" Expanded Icon="@Icons.Filled.AddBox">
+            @if (_canViewProductCategories)
+            {
+                <MudNavLink Href="/catalog/productcategories" Icon="@Icons.Filled.ShoppingBag" Class="fsh-nav-child">
+                    @L["Product Categories"]
+                </MudNavLink>
+            }
             @if (_canViewProducts)
             {
                 <MudNavLink Href="/catalog/products" Icon="@Icons.Filled.ShoppingBag" Class="fsh-nav-child">
@@ -32,6 +38,18 @@
             {
                 <MudNavLink Href="/catalog/brands" Icon="@Icons.Filled.ShoppingBag" Class="fsh-nav-child">
                     @L["Brands"]
+                </MudNavLink>
+            }
+            @if (_canViewJobTypeCategories)
+            {
+                <MudNavLink Href="/catalog/jobtypecategories" Icon="@Icons.Filled.ShoppingBag" Class="fsh-nav-child">
+                    @L["Job Type Categories"]
+                </MudNavLink>
+            }
+            @if (_canViewJobTypes)
+            {
+                <MudNavLink Href="/catalog/jobtypes" Icon="@Icons.Filled.ShoppingBag" Class="fsh-nav-child">
+                    @L["Job Types"]
                 </MudNavLink>
             }
         </MudNavGroup>
